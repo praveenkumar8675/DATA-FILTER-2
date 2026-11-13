@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filter Smarter. Discover More. Grow Faster. | Data Filter</title>
+<meta name="description" content="Data Filter helps businesses search, filter and analyze large datasets quickly.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%238b5cf6'/%3E%3Cpath d='M7 9h18l-7 8v6l-4 2v-8z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f19;
+    --bg-card: rgba(22, 29, 47, 0.72);
+    --bg-glass: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.1);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent1: #38bdf8;
+    --accent2: #8b5cf6;
+    --grad: linear-gradient(135deg, var(--accent1), var(--accent2));
+    --err: #f87171;
+    --ok: #34d399;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12), transparent 35%),
+                radial-gradient(circle at 85% 25%, rgba(139, 92, 246, 0.14), transparent 40%),
+                var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, .brand { font-family: 'Sora', sans-serif; line-height: 1.25; }
+  a { color: inherit; text-decoration: none; transition: 0.2s ease; }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--accent2); color: #fff; padding: 0.5rem 1rem; z-index: 999;
+  }
+  .skip:focus { left: 1rem; top: 1rem; border-radius: 8px; }
+
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 1.25rem; width: 100%; }
+
+  /* Header & Navigation */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11, 15, 25, 0.82);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  header .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 70px; gap: 1rem;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 0.65rem;
+    font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em;
+  }
+  .logo-mark { width: 32px; height: 32px; flex-shrink: 0; }
+  .menu {
+    display: none; background: var(--bg-glass); color: var(--text);
+    border: 1px solid var(--border); padding: 0.45rem 0.85rem;
+    border-radius: 8px; font: inherit; cursor: pointer;
+  }
+  nav { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+  nav a {
+    padding: 0.45rem 0.8rem; border-radius: 8px; font-size: 0.94rem;
+    color: var(--muted); font-weight: 500;
+  }
+  nav a:hover, nav a[aria-current="page"] {
+    color: var(--text); background: var(--bg-glass);
+  }
+  nav a[aria-current="page"] {
+    background: rgba(139, 92, 246, 0.18);
+    color: #fff;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+  }
+
+  /* Main & SPA Views */
+  main { flex: 1; padding-bottom: 4rem; }
+  .page-view { display: none; animation: fadeIn 0.25s ease; }
+  .page-view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Typography & Hero */
+  .grad {
+    background: var(--grad);
+    
+    -webkit-text-fill-color: transparent;
+  }
+  .page-hero { padding: 3.5rem 1.25rem 2rem; text-align: center; max-width: 760px; }
+  .page-hero h1 { font-size: clamp(2rem, 4vw, 2.75rem); margin-bottom: 0.75rem; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .badge {
+    display: inline-block; padding: 0.35rem 0.85rem; border-radius: 999px;
+    background: rgba(56, 189, 248, 0.12); color: var(--accent1);
+    border: 1px solid rgba(56, 189, 248, 0.3); font-size: 0.85rem;
+    font-weight: 600; margin-bottom: 1rem;
+  }
+
+  .hero {
+    display: grid; grid-template-columns: 1.15fr 0.85fr;
+    gap: 2.5rem; align-items: center; padding-top: 3.5rem; padding-bottom: 3rem;
+  }
+  .hero h1 { font-size: clamp(2.1rem, 4.5vw, 3.2rem); margin-bottom: 1rem; }
+  .cta { display: flex; gap: 0.85rem; flex-wrap: wrap; margin: 1.25rem 0 0.75rem; }
+  .note { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.7rem 1.35rem; border-radius: 10px; font-weight: 600;
+    background: var(--grad); color: #fff; border: none; cursor: pointer;
+    font: inherit; transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:hover { opacity: 0.92; transform: translateY(-1px); }
+  .btn.ghost {
+    background: var(--bg-glass); border: 1px solid var(--border); color: var(--text);
+  }
+  .btn.ghost:hover { background: rgba(255, 255, 255, 0.08); }
+
+  /* Dashboard Preview */
+  .dash {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  }
+  .dash-top {
+    display: flex; align-items: center; gap: 0.45rem;
+    font-size: 0.82rem; color: var(--muted); margin-bottom: 1rem;
+  }
+  .dash-top i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); display: inline-block; }
+  .dash-top i:nth-child(1) { background: #f87171; }
+  .dash-top i:nth-child(2) { background: #fbbf24; }
+  .dash-top i:nth-child(3) { background: #34d399; margin-right: 0.4rem; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .tiles > div { background: var(--bg-glass); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border); }
+  .tiles small { display: block; color: var(--muted); font-size: 0.78rem; }
+  .tiles b { font-size: 1.2rem; color: #fff; }
+  .bars {
+    height: 110px; display: flex; align-items: flex-end; gap: 0.5rem;
+    padding: 0.75rem; background: var(--bg-glass); border-radius: 10px; margin-bottom: 1rem;
+  }
+  .bars span {
+    flex: 1; height: var(--h, 50%); background: var(--grad);
+    border-radius: 6px 6px 2px 2px;
+  }
+  .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .chips span {
+    font-size: 0.78rem; padding: 0.25rem 0.65rem; border-radius: 99px;
+    background: rgba(139, 92, 246, 0.16); color: #ddd6fe; border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  /* Sections, Grids & Cards */
+  section.wrap { margin-top: 2.5rem; }
+  .sec-head { text-align: center; max-width: 640px; margin: 0 auto 2rem; }
+  .sec-head h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 0.4rem; }
+  .sec-head p { color: var(--muted); }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .grid.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid.g4 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem;
+    backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 0.65rem;
+  }
+  .card.wide { margin-top: 1.25rem; }
+  .card h3 { font-size: 1.15rem; }
+  .card p { color: var(--muted); font-size: 0.95rem; }
+  .ic {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(56, 189, 248, 0.12); color: var(--accent1);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+  .ico { width: 22px; height: 22px; }
+  .more { color: var(--accent1); font-weight: 600; font-size: 0.9rem; margin-top: auto; padding-top: 0.4rem; }
+  .more:hover { text-decoration: underline; }
+  
+
+  figure.card blockquote { font-style: italic; color: var(--text); margin-bottom: 0.5rem; }
+  figure.card figcaption { font-weight: 600; font-size: 0.9rem; margin-top: auto; }
+  figure.card figcaption span { display: block; font-weight: 400; font-size: 0.8rem; color: var(--muted); }
+
+  .band {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(139, 92, 246, 0.18));
+    border: 1px solid rgba(139, 92, 246, 0.35); border-radius: var(--radius);
+    padding: 2rem; display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
+  }
+  .band p { color: var(--muted); margin-top: 0.25rem; }
+
+  /* Pricing Plans */
+  .plan { position: relative; }
+  .plan.featured { border-color: var(--accent2); box-shadow: 0 0 25px rgba(139, 92, 246, 0.2); }
+  .plan .tag {
+    align-self: flex-start; background: var(--grad); color: #fff;
+    font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 99px;
+  }
+  .plan .price { font-size: 1rem; color: var(--muted); margin: 0.25rem 0; }
+  .plan .price b { font-size: 1.75rem; color: var(--text); }
+  .plan ul { list-style: none; margin: 0.5rem 0 1.25rem; display: flex; flex-direction: column; gap: 0.45rem; flex: 1; }
+  .plan li { font-size: 0.92rem; color: var(--muted); padding-left: 1.2rem; position: relative; }
+  .plan li::before { content: "•"; color: var(--accent1); position: absolute; left: 0; font-weight: bold; }
+
+  /* Forms & Split Layout */
+  .split { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 1.5rem; align-items: start; }
+  .field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.92rem; font-weight: 500; margin-bottom: 0.5rem; }
+  input, select, textarea {
+    background: rgba(11, 15, 25, 0.75); border: 1px solid var(--border);
+    color: var(--text); padding: 0.65rem 0.85rem; border-radius: 10px;
+    font: inherit; outline: none; transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent1); }
+  .err { color: var(--err); font-size: 0.8rem; min-height: 1.1em; }
+  .ok {
+    background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.35);
+    color: var(--ok); padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.9rem; margin-top: 0.5rem;
+  }
+
+  /* Demo Dashboard Panel */
+  .panel { gap: 1.25rem; }
+  .filters {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; align-items: end;
+  }
+  .summary {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    padding: 0.85rem 1rem; background: var(--bg-glass); border-radius: 10px;
+    border: 1px solid var(--border); font-size: 0.95rem;
+  }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th, td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.94rem; }
+  th { background: rgba(255, 255, 255, 0.03); color: var(--muted); font-weight: 600; }
+  tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .empty { text-align: center; padding: 1.5rem; color: var(--muted); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border); background: rgba(11, 15, 25, 0.9);
+    padding: 3rem 0 2rem; margin-top: auto;
+  }
+  .fgrid {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  footer h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+  footer p { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; }
+  .flinks { display: flex; flex-direction: column; gap: 0.4rem; }
+  .flinks a { color: var(--muted); font-size: 0.9rem; }
+  .flinks a:hover { color: var(--text); }
+  .legal {
+    border-top: 1px solid var(--border); padding-top: 1.25rem;
+    font-size: 0.82rem; color: var(--muted); text-align: center;
+  }
+
+  @media (max-width: 820px) {
+    .hero, .split, .fgrid { grid-template-columns: 1fr; }
+    .menu { display: inline-block; }
+    nav {
+      display: none; width: 100%; flex-direction: column; align-items: stretch;
+      padding: 0.75rem 0; border-top: 1px solid var(--border);
+    }
+    nav.open { display: flex; }
+    header .wrap { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- SHARED HEADER -->
+<header>
+  <div class="wrap">
+    <a class="brand" href="#home" data-page="home">
+      <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        <rect width="32" height="32" rx="9" fill="url(#lg)"/>
+        <path d="M7 9h18l-7 8v6l-4 2v-8z" fill="#fff"/>
+      </svg>Data Filter
+    </a>
+    <button class="menu" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav id="nav" aria-label="Main">
+      <a href="#home" data-page="home" aria-current="page">Home</a>
+      <a href="#about" data-page="about">About</a>
+      <a href="#services" data-page="services">Services</a>
+      <a href="#demo" data-page="demo">Live Demo</a>
+      <a href="#pricing" data-page="pricing">Pricing</a>
+      <a href="#guarantee" data-page="guarantee">Guarantee</a>
+      <a href="#contact" data-page="contact">Contact</a>
+      <a href="#register" data-page="register">Register</a>
+      <a href="#login" data-page="login" id="navLoginLink">Login</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- ==================== 1. HOME (index.html) ==================== -->
+  <div id="page-home" class="page-view active">
+    <section class="wrap hero">
+      <div>
+        <span class="badge">Smart data filtering for growing businesses</span>
+        <h1 class="grad">Filter Smarter. Discover More. Grow Faster.</h1>
+        <p class="lead">Data Filter helps businesses organize, search and analyze large amounts of data in seconds, so your team spends less time hunting for records and more time acting on what they find.</p>
+        <div class="cta">
+          <a class="btn" href="#demo" data-page="demo">Try the live demo</a>
+          <a class="btn ghost" href="#pricing" data-page="pricing">See pricing</a>
+        </div>
+        <p class="note">Works in any modern browser, anywhere in the world.</p>
+      </div>
+      <div class="dash" role="img" aria-label="Sample dashboard preview">
+        <div class="dash-top"><i></i><i></i><i></i>Sales overview (sample data)</div>
+        <div class="tiles">
+          <div><small>Records</small><b>12,480</b></div>
+          <div><small>Matches</small><b>342</b></div>
+          <div><small>Revenue</small><b>&#8377;4.8L</b></div>
+        </div>
+        <div class="bars">
+          <span style="--h:38%;--i:0"></span><span style="--h:55%;--i:1"></span><span style="--h:46%;--i:2"></span><span style="--h:72%;--i:3"></span><span style="--h:60%;--i:4"></span><span style="--h:88%;--i:5"></span><span style="--h:68%;--i:6"></span><span style="--h:95%;--i:7"></span>
+        </div>
+        <div class="chips"><span>Category: Electronics</span><span>Sales &ge; 100</span><span>Search: "watch"</span></div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="sec-head">
+        <h2>Built to answer business questions quickly</h2>
+        <p>Three everyday problems, solved by one filter panel.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3>Save time</h3><p>Stop scrolling through spreadsheets. Combine search, category and sales filters to reach the right rows in seconds.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/></svg></span><h3>Organize records</h3><p>Keep customer and sales records tidy, searchable and easy to share with your whole team.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><h3>Spot opportunities</h3><p>See which products and categories sell best, and where there is room to improve profitability.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>Decide with confidence</h3><p>Clear tables and totals help you make better decisions from data you already have.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="sec-head">
+        <h2>Featured services</h2>
+        <p>Pick a ready-made service or ask for something built around your data.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></span><h3>Smart Data Filtering</h3><p>Multi-condition search and filters that update instantly.</p><a class="more" href="#services" data-page="services">Learn more</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/></svg></span><h3>Customer Data Organization</h3><p>Structure customer records so they are easy to find.</p><a class="more" href="#services" data-page="services">Learn more</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>Sales Data Analysis</h3><p>Understand product and category performance.</p><a class="more" href="#services" data-page="services">Learn more</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></span><h3>Custom Solutions</h3><p>Filtering workflows tailored to your business.</p><a class="more" href="#services" data-page="services">Learn more</a></article>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="sec-head">
+        <h2>What customers say</h2>
+        <p>Sample testimonials, written for this project. They are not real customers.</p>
+      </div>
+      <div class="grid">
+        <figure class="card"><blockquote>Finding the right orders used to take us an afternoon. Now it takes a minute.</blockquote><figcaption>Priya S., Operations Manager<span>Sample testimonial (fictional)</span></figcaption></figure>
+        <figure class="card"><blockquote>The category and sales filters showed us which products deserved more shelf space.</blockquote><figcaption>Daniel R., Retail Owner<span>Sample testimonial (fictional)</span></figcaption></figure>
+        <figure class="card"><blockquote>Easy for the whole team to learn. Support answered every question quickly.</blockquote><figcaption>Meera K., Analyst<span>Sample testimonial (fictional)</span></figcaption></figure>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="band">
+        <div><h2>See the filters working</h2><p>Open the live demo and try it with sample business data.</p></div>
+        <a class="btn" href="#demo" data-page="demo">Open live demo</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== 2. ABOUT (about.html) ==================== -->
+  <div id="page-about" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">About Data Filter</h1><p class="lead">We help businesses turn large, messy datasets into clear answers.</p></section>
+    <section class="wrap">
+      <div class="grid">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3>The problem</h3><p>Businesses collect thousands of sales and customer records, but finding the right ones is slow. Teams lose hours in spreadsheets and miss useful patterns.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></span><h3>Our solution</h3><p>Data Filter gives teams one fast panel to search, filter and organize records, with results and totals that update instantly.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><h3>Our mission</h3><p>Make data easy to use for every business, whatever its size or location.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><h3>Our vision</h3><p>A world where every team can find the insight in its data without needing a data scientist.</p></article>
+      </div>
+    </section>
+    <section class="wrap">
+      <div class="sec-head"><h2>Why choose Data Filter</h2><p>Practical, honest and easy to adopt.</p></div>
+      <div class="grid">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3>Fast</h3><p>Results update as you type, with no page reloads.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/></svg></span><h3>Simple</h3><p>Clear controls any team member can learn in minutes.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><h3>Supported</h3><p>Every package comes with our 3-year service support guarantee.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><h3>Global</h3><p>Runs in the browser, so customers can use it from anywhere.</p></article>
+      </div>
+    </section>
+    <section class="wrap"><div class="card wide"><h2>How Data Filter helps you save time and find opportunities</h2><p>By narrowing thousands of rows to the few that matter, your team spends less time searching and more time reviewing. Seeing which products and categories perform best can point to opportunities to improve profitability. Data Filter supports better decisions, but we do not promise any specific increase in profit; results depend on how a business uses its data.</p></div></section>
+    <section class="wrap"><div class="band"><div><h2>Want to see it in action?</h2><p>Try the live demo or talk to us about your data.</p></div><a class="btn" href="#contact" data-page="contact">Contact us</a></div></section>
+  </div>
+
+  <!-- ==================== 3. SERVICES (services.html) ==================== -->
+  <div id="page-services" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">Our services</h1><p class="lead">Four ways Data Filter helps you work with data.</p></section>
+    <section class="wrap">
+      <div class="grid g2">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></span><h3>Smart Data Filtering</h3><p>Search by name, narrow by category and set minimum values. Every filter works together and updates instantly.</p><a class="btn ghost" href="#contact" data-page="contact" data-service="smart">Request this service</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/></svg></span><h3>Customer Data Organization</h3><p>We help structure customer lists into clean, searchable records your team can trust.</p><a class="btn ghost" href="#contact" data-page="contact" data-service="customer">Request this service</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>Sales Data Analysis</h3><p>Find top products, strong categories and slow movers from your sales records.</p><a class="btn ghost" href="#contact" data-page="contact" data-service="sales">Request this service</a></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></span><h3>Custom Data Filtering Solutions</h3><p>Need something specific? We design a filtering workflow around your data and process.</p><a class="btn ghost" href="#contact" data-page="contact" data-service="custom">Request this service</a></article>
+      </div>
+    </section>
+    <section class="wrap"><div class="band"><div><h2>Not sure which service fits?</h2><p>Tell us about your data and we will suggest a starting point.</p></div><a class="btn" href="#contact" data-page="contact">Talk to us</a></div></section>
+  </div>
+
+  <!-- ==================== 4. LIVE DEMO (demo.html) ==================== -->
+  <div id="page-demo" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">Live demo</h1><p class="lead">Filter sample business data. All three filters work together, and nothing reloads.</p></section>
+    <section class="wrap">
+      <div class="card panel">
+        <div class="filters">
+          <label class="field">Search product<input id="q" type="search" placeholder="e.g. watch" maxlength="40" autocomplete="off"></label>
+          <label class="field">Category<select id="cat"><option value="all">All categories</option></select></label>
+          <label class="field">Minimum sales: <output id="minv">0</output><input id="min" type="range" min="0" max="700" step="10" value="0"></label>
+          <button class="btn ghost" id="reset" type="button">Reset filters</button>
+        </div>
+        <div class="summary" aria-live="polite"><span><b id="count">0</b> matching records</span><span>Revenue shown: <b id="total">&#8377;0</b></span></div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Product name</th><th>Category</th><th class="num">Sales quantity</th><th class="num">Revenue</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p id="none" class="empty" hidden>No results found. Try a different name, choose another category or lower the minimum sales.</p>
+      </div>
+      <p class="note">All data on this page is sample data stored in client-side JavaScript. There is no database or server.</p>
+    </section>
+  </div>
+
+  <!-- ==================== 5. PRICING (pricing.html) ==================== -->
+  <div id="page-pricing" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">Simple, flexible pricing</h1><p class="lead">Pay by the hour or choose a bundle. Sample prices for this project.</p></section>
+    <section class="wrap">
+      <div class="grid g4">
+        <article class="card plan"><h3>Hourly Service</h3><p class="price"><b>&#8377;500</b> / hour</p><ul><li>Pay only for time used</li><li>Filtering help and data tidy-up</li><li>Email support</li></ul><a class="btn ghost" href="#contact" data-page="contact" data-service="general">Book hours</a></article>
+        <article class="card plan"><h3>Starter Bundle</h3><p class="price"><b>&#8377;2,999</b> one-time</p><ul><li>Smart data filtering setup</li><li>Up to 1 dataset</li><li>Basic training guide</li><li>3-year support guarantee</li></ul><a class="btn ghost" href="#contact" data-page="contact" data-service="smart">Choose Starter</a></article>
+        <article class="card plan featured"><span class="tag">Recommended for growing teams</span><h3>Business Bundle</h3><p class="price"><b>&#8377;7,999</b> one-time</p><ul><li>Everything in Starter</li><li>Customer data organization</li><li>Sales data analysis</li><li>Up to 5 datasets</li><li>3-year support guarantee</li></ul><a class="btn" href="#contact" data-page="contact" data-service="sales">Choose Business</a></article>
+        <article class="card plan"><h3>Enterprise Bundle</h3><p class="price"><b>Custom</b> pricing</p><ul><li>Custom filtering solution</li><li>Unlimited datasets by agreement</li><li>Priority assistance</li><li>3-year support guarantee</li></ul><a class="btn ghost" href="#contact" data-page="contact" data-service="custom">Request a quote</a></article>
+         
+    </div>
+      <div class="card wide"><h3>Good to know</h3><p>These are sample prices for a college microproject. Actual prices depend on each customer's requirements, such as data size and the amount of customization. Use the buttons above to send an enquiry; the form opens with your plan already selected.</p></div>
+    </section>
+  </div>
+
+  <!-- ==================== 6. GUARANTEE (guarantee.html) ==================== -->
+  <div id="page-guarantee" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">3-Year Service Support Guarantee</h1><p class="lead">Every Data Filter package includes three years of support from the day your project is delivered.</p></section>
+    <section class="wrap">
+      <div class="grid g2">
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/></svg></span><h3>Technical support</h3><p>Ask questions about using your Data Filter setup and get a clear answer.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></span><h3>Bug fixes within scope</h3><p>We fix defects in the features covered by your agreed project scope.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></span><h3>Product-related assistance</h3><p>Help with filters, data formats and everyday use of the product.</p></article>
+        <article class="card"><span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><h3>Maintenance guidance</h3><p>Advice on keeping your setup healthy as your data grows.</p></article>
+      </div>
+      <div class="card wide"><h3>Please note</h3><p>This guarantee is a sample business guarantee created for a microproject. In a real business, the exact service terms would be defined in a customer agreement.</p></div>
+    </section>
+    <section class="wrap"><div class="band"><div><h2>Questions about support?</h2><p>We are happy to explain what is covered.</p></div><a class="btn" href="#contact" data-page="contact">Contact us</a></div></section>
+  </div>
+
+  <!-- ==================== 7. CONTACT (contact.html) ==================== -->
+  <div id="page-contact" class="page-view">
+    <section class="wrap page-hero"><h1 class="grad">Contact us</h1><p class="lead">Tell us about your data. We will reply with next steps.</p></section>
+    <section class="wrap split">
+      <form class="card" id="contactForm" novalidate>
+        <label class="field">Name<input name="name" type="text" autocomplete="name" maxlength="60" required><small class="err" data-err="name"></small></label>
+        <label class="field">Email<input name="email" type="email" autocomplete="email" maxlength="80" required><small class="err" data-err="email"></small></label>
+        <label class="field">Business name<input name="business" type="text" maxlength="80" required><small class="err" data-err="business"></small></label>
+        <label class="field">Service required
+          <select name="service" id="contactService" required>
+            <option value="">Choose a service</option>
+            <option value="smart">Smart Data Filtering</option>
+            <option value="customer">Customer Data Organization</option>
+            <option value="sales">Sales Data Analysis</option>
+            <option value="custom">Custom Data Filtering Solution</option>
+            <option value="general">General enquiry</option>
+          </select>
+          <small class="err" data-err="service"></small>
+        </label>
+        <label class="field">Message<textarea name="message" rows="5" maxlength="500" required></textarea><small class="err" data-err="message"></small></label>
+        <button class="btn" type="submit">Send message</button>
+        <p class="ok" id="ok" role="status" hidden>Thank you! Your message passed validation. This is a frontend-only demo, so nothing was sent to a server.</p>
+      </form>
+      <aside class="card">
+        <span class="ic"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+        <h3>Business details</h3>
+        <p>Email: datafilter@karunya.edu.in<br>Phone: +91 8554557554<br>Hours: Monday to Friday, 9:00 to 18:00 IST<br>Location: Karunya Nagar, Coimbatore</p>
+        <p class="note">Sample details for a fictional business.</p>
+      </aside>
+    </section>
+  </div>
+
+  <!-- ==================== 8. REGISTER (register.html) ==================== -->
+  <div id="page-register" class="page-view">
+    <section class="wrap page-hero">
+      <h1 class="grad">Create an Account</h1>
+      <p class="lead">Sign up to access Data Filter tools and manage your business datasets.</p>
+    </section>
+    <section class="wrap split">
+      <form class="card" id="registerForm" novalidate>
+        <label class="field">Full name
+          <input name="name" id="regName" type="text" autocomplete="name" placeholder="e.g. GOPAL KRISHNAN" maxlength="60" required>
+          <small class="err" data-err="regName"></small>
+        </label>
+        <label class="field">Email address
+          <input name="email" id="regEmail" type="email" autocomplete="email" placeholder="you@company.com" maxlength="80" required>
+          <small class="err" data-err="regEmail"></small>
+        </label>
+        <label class="field">Business / Organization name
+          <input name="business" id="regBusiness" type="text" placeholder="e.g. Acme Retail" maxlength="80" required>
+          <small class="err" data-err="regBusiness"></small>
+        </label>
+        <label class="field">Password
+          <input name="password" id="regPass" type="password" autocomplete="new-password" placeholder="At least 6 characters" minlength="6" maxlength="60" required>
+          <small class="err" data-err="regPass"></small>
+        </label>
+        <label class="field">Confirm password
+          <input name="confirmPassword" id="regConfirm" type="password" autocomplete="new-password" placeholder="Re-enter your password" minlength="6" maxlength="60" required>
+          <small class="err" data-err="regConfirm"></small>
+        </label>
+        <button class="btn" type="submit">Create account</button>
+        <p class="ok" id="regOk" role="status" hidden>Account created successfully! Redirecting to login...</p>
+      </form>
+      <aside class="card">
+        <span class="ic">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="8" r="3.5"/>
+            <path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.5 3.5 6"/>
+          </svg>
+        </span>
+        <h3>Already have an account?</h3>
+        <p>If you have already registered on this browser, you can sign in directly to view your profile and use the live demo.</p>
+        <div class="cta">
+          <a class="btn ghost" href="#login" data-page="login">Go to Login</a>
+        </div>
+        <p class="note">This is a frontend-only microproject. Your account details are stored locally in your browser.</p>
+      </aside>
+    </section>
+  </div>
+
+  <!-- ==================== 9. LOGIN (login.html) ==================== -->
+  <div id="page-login" class="page-view">
+    <section class="wrap page-hero">
+      <h1 class="grad">Sign In</h1>
+      <p class="lead">Enter your registered email and password to enter the website.</p>
+    </section>
+    <section class="wrap split">
+      <form class="card" id="loginForm" novalidate>
+        <label class="field">Email address
+          <input name="email" id="loginEmail" type="email" autocomplete="email" placeholder="you@company.com" maxlength="80" required>
+          <small class="err" data-err="loginEmail"></small>
+        </label>
+        <label class="field">Password
+          <input name="password" id="loginPass" type="password" autocomplete="current-password" placeholder="Enter your password" maxlength="60" required>
+          <small class="err" data-err="loginPass"></small>
+        </label>
+        <button class="btn" type="submit">Login</button>
+        <p class="ok" id="loginOk" role="status" hidden>Login successful! Opening Home page...</p>
+      </form>
+      <aside class="card">
+        <span class="ic">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <h3>New to Data Filter?</h3>
+        <p>Create an account first so you can sign in and unlock all website pages.</p>
+        <div class="cta">
+          <a class="btn ghost" href="#register" data-page="register">Create an Account</a>
+        </div>
+      </aside>
+    </section>
+  </div>
+</main>
+
+<!-- SHARED FOOTER -->
+<footer>
+  <div class="wrap fgrid">
+    <div>
+      <a class="brand" href="#home" data-page="home">
+        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+          <rect width="32" height="32" rx="9" fill="url(#lg2)"/>
+          <path d="M7 9h18l-7 8v6l-4 2v-8z" fill="#fff"/>
+        </svg>Data Filter
+      </a>
+      <p>Smart data filtering for businesses everywhere. Filter smarter, discover more, grow faster.</p>
+    </div>
+    <div>
+      <h3>Explore</h3>
+      <div class="flinks">
+        <a href="#home" data-page="home">Home</a>
+        <a href="#about" data-page="about">About</a>
+        <a href="#services" data-page="services">Services</a>
+        <a href="#demo" data-page="demo">Live Demo</a>
+        <a href="#pricing" data-page="pricing">Pricing</a>
+        <a href="#guarantee" data-page="guarantee">Guarantee</a>
+        <a href="#contact" data-page="contact">Contact</a>
+        <a href="#register" data-page="register">Register</a>
+        <a href="#login" data-page="login">Login</a>
+      </div>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p>info@datafilter.example<br>datafilter@karunya.edu.in<br>+91 8554557554<br>Remote-first team, serving customers worldwide</p>
+    </div>
+  </div>
+  <div class="wrap legal">Data Filter is a fictional business created for a Web Technology microproject. All names, prices, testimonials and contact details are sample content.</div>
+</footer>
+
+<script>
+  // --- 1. SPA Navigation & Mobile Menu (js/main.js) ---
+  const menuBtn = document.querySelector('.menu');
+  const nav = document.getElementById('nav');
+
+  menuBtn.addEventListener('click', () => {
+    const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!expanded));
+    nav.classList.toggle('open');
+  });
+
+  function showPage(pageId, servicePreset = null) {
+    const pages = document.querySelectorAll('.page-view');
+    const target = document.getElementById('page-' + pageId) || document.getElementById('page-home');
+
+    pages.forEach(p => p.classList.remove('active'));
+    target.classList.add('active');
+
+    document.querySelectorAll('nav a').forEach(link => {
+      if (link.dataset.page === pageId) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    if (servicePreset) {
+      const sel = document.getElementById('contactService');
+      if (sel) sel.value = servicePreset;
+    }
+
+    nav.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-page]');
+    if (!link) return;
+    e.preventDefault();
+    const page = link.dataset.page;
+    const service = link.dataset.service || null;
+    history.pushState(null, '', '#' + page);
+    showPage(page, service);
+  });
+
+  window.addEventListener('popstate', () => {
+    const hash = location.hash.replace('#', '') || 'home';
+    showPage(hash);
+  });
+
+  // Load initial hash if present
+  if (location.hash) {
+    showPage(location.hash.replace('#', ''));
+  }
+
+  // --- 2. Live Demo Filtering (js/demo.js) ---
+  const sampleData = [
+    { name: 'Smart Watch Pro', category: 'Electronics', sales: 420, revenue: 126000 },
+    { name: 'Fitness Tracker Watch', category: 'Electronics', sales: 310, revenue: 62000 },
+    { name: 'Wireless Earbuds', category: 'Electronics', sales: 640, revenue: 96000 },
+    { name: 'Bluetooth Speaker', category: 'Electronics', sales: 280, revenue: 56000 },
+    { name: 'Ergonomic Office Chair', category: 'Furniture', sales: 150, revenue: 135000 },
+    { name: 'Standing Desk Frame', category: 'Furniture', sales: 95, revenue: 114000 },
+    { name: 'Wooden Bookshelf', category: 'Furniture', sales: 180, revenue: 72000 },
+    { name: 'Organic Green Tea Pack', category: 'Groceries', sales: 690, revenue: 27600 },
+    { name: 'Arabica Coffee Beans 1kg', category: 'Groceries', sales: 520, revenue: 78000 },
+    { name: 'Almond Butter Jar', category: 'Groceries', sales: 410, revenue: 49200 },
+    { name: 'Cotton Crew T-Shirt', category: 'Apparel', sales: 580, revenue: 52200 },
+    { name: 'Running Shoes', category: 'Apparel', sales: 260, revenue: 91000 },
+    { name: 'Waterproof Laptop Backpack', category: 'Accessories', sales: 350, revenue: 70000 },
+    { name: 'Classic Analog Watch', category: 'Accessories', sales: 190, revenue: 57000 }
+  ];
+
+  const qInput = document.getElementById('q');
+  const catSelect = document.getElementById('cat');
+  const minInput = document.getElementById('min');
+  const minOut = document.getElementById('minv');
+  const resetBtn = document.getElementById('reset');
+  const rowsBody = document.getElementById('rows');
+  const countEl = document.getElementById('count');
+  const totalEl = document.getElementById('total');
+  const noneEl = document.getElementById('none');
+
+  const categories = [...new Set(sampleData.map(item => item.category))];
+  categories.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    catSelect.appendChild(opt);
+  });
+
+  function renderDemo() {
+    const q = qInput.value.trim().toLowerCase();
+    const cat = catSelect.value;
+    const min = Number(minInput.value);
+    minOut.textContent = String(min);
+
+    const filtered = sampleData.filter(item => {
+      const matchName = item.name.toLowerCase().includes(q);
+      const matchCat = cat === 'all' || item.category === cat;
+      const matchSales = item.sales >= min;
+      return matchName && matchCat && matchSales;
+    });
+
+    rowsBody.textContent = '';
+    let revenueSum = 0;
+
+    filtered.forEach(item => {
+      revenueSum += item.revenue;
+      const tr = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = item.name;
+      const tdCat = document.createElement('td');
+      tdCat.textContent = item.category;
+      const tdSales = document.createElement('td');
+      tdSales.className = 'num';
+      tdSales.textContent = item.sales.toLocaleString('en-IN');
+      const tdRev = document.createElement('td');
+      tdRev.className = 'num';
+      tdRev.textContent = '₹' + item.revenue.toLocaleString('en-IN');
+
+      tr.append(tdName, tdCat, tdSales, tdRev);
+      rowsBody.appendChild(tr);
+    });
+
+    countEl.textContent = String(filtered.length);
+    totalEl.textContent = '₹' + revenueSum.toLocaleString('en-IN');
+    noneEl.hidden = filtered.length > 0;
+  }
+
+  qInput.addEventListener('input', renderDemo);
+  catSelect.addEventListener('change', renderDemo);
+  minInput.addEventListener('input', renderDemo);
+  resetBtn.addEventListener('click', () => {
+    qInput.value = '';
+    catSelect.value = 'all';
+    minInput.value = '0';
+    renderDemo();
+  });
+  renderDemo();
+
+  // --- 3. Contact Form Validation ---
+  const contactForm = document.getElementById('contactForm');
+  const okMsg = document.getElementById('ok');
+
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    okMsg.hidden = true;
+    let valid = true;
+
+    const fields = ['name', 'email', 'business', 'service', 'message'];
+    fields.forEach(name => {
+      const input = contactForm.elements[name];
+      const errEl = contactForm.querySelector(`[data-err="${name}"]`);
+      errEl.textContent = '';
+
+      const val = input.value.trim();
+      if (!val) {
+        errEl.textContent = 'This field is required.';
+        valid = false;
+      } else if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        errEl.textContent = 'Please enter a valid email address.';
+        valid = false;
+      }
+    });
+
+    if (valid) {
+      okMsg.hidden = false;
+      contactForm.reset();
+    }
+  });
+
+  // --- 4. Authentication (js/auth.js) ---
+  const registerForm = document.getElementById('registerForm');
+  const loginForm = document.getElementById('loginForm');
+
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const regOk = document.getElementById('regOk');
+    regOk.hidden = true;
+
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const business = document.getElementById('regBusiness').value.trim();
+    const pass = document.getElementById('regPass').value;
+    const confirm = document.getElementById('regConfirm').value;
+
+    ['regName', 'regEmail', 'regBusiness', 'regPass', 'regConfirm'].forEach(id => {
+      document.querySelector(`[data-err="${id}"]`).textContent = '';
+    });
+
+    let valid = true;
+    if (!name) { document.querySelector('[data-err="regName"]').textContent = 'Full name is required.'; valid = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.querySelector('[data-err="regEmail"]').textContent = 'Valid email is required.'; valid = false; }
+    if (!business) { document.querySelector('[data-err="regBusiness"]').textContent = 'Business name is required.'; valid = false; }
+    if (pass.length < 6) { document.querySelector('[data-err="regPass"]').textContent = 'Password must be at least 6 characters.'; valid = false; }
+    if (pass !== confirm) { document.querySelector('[data-err="regConfirm"]').textContent = 'Passwords do not match.'; valid = false; }
+
+    if (valid) {
+      localStorage.setItem('df_user', JSON.stringify({ name, email, business, pass }));
+      regOk.hidden = false;
+      registerForm.reset();
+      setTimeout(() => showPage('login'), 1200);
+    }
+  });
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const loginOk = document.getElementById('loginOk');
+    loginOk.hidden = true;
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+
+    document.querySelector('[data-err="loginEmail"]').textContent = '';
+    document.querySelector('[data-err="loginPass"]').textContent = '';
+
+    const saved = JSON.parse(localStorage.getItem('df_user') || 'null');
+    if (!email) {
+      document.querySelector('[data-err="loginEmail"]').textContent = 'Enter your email address.';
+      return;
+    }
+    if (!pass) {
+      document.querySelector('[data-err="loginPass"]').textContent = 'Enter your password.';
+      return;
+    }
+
+    if (saved && saved.email.toLowerCase() === email.toLowerCase() && saved.pass === pass) {
+      loginOk.hidden = false;
+      document.getElementById('navLoginLink').textContent = 'Hi, ' + saved.name.split(' ')[0];
+      setTimeout(() => showPage('home'), 1000);
+    } else {
+      document.querySelector('[data-err="loginPass"]').textContent = 'Invalid email or password (register an account first).';
+    }
+  });
+  // --- 5. Calculator ---
+  window.appendCalc = function(val) {
+    const screen = document.getElementById('calcScreen');
+    if (!screen) return;
+    if (screen.value === '0' || screen.value === 'Error') {
+      screen.value = val === '.' ? '0.' : val;
+    } else {
+      screen.value += val;
+    }
+  };
+  
+  window.clearCalc = function() {
+    const screen = document.getElementById('calcScreen');
+    if (screen) screen.value = '0';
+  };
+  
+  window.calculateEq = function() {
+    const screen = document.getElementById('calcScreen');
+    if (!screen || screen.value === 'Error') return;
+    
+    try {
+      const sanitized = screen.value.replace(/[^-()\d/*+.]/g, '');
+      if (!sanitized) return;
+      const result = new Function('return ' + sanitized)();
+      
+      if (!isFinite(result) || isNaN(result)) throw new Error('Math Error');
+      screen.value = Number.isInteger(result) ? result : parseFloat(result.toFixed(6));
+    } catch (e) {
+      screen.value = 'Error';
+      setTimeout(window.clearCalc, 1200);
+    }
+  };
+</script>
+</body>
+</html>
